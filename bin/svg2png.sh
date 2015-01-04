@@ -6,19 +6,25 @@ svg_to_png() {
     dest_path=$3
     filename=$4
 
-    # -fill black -opaque white \
-    out_filename=ic_action_${filename//svg/png}
+    # remove the dimension from destination filename
+    out_filename=${filename//_[0-9]*px/}
+    out_filename=ic_action_${out_filename//svg/png}
+    mkdir -p $dest_path
+
     convert -density $density -background none \
+    -fill white -opaque black \
     $filename \
     -resize $size -gravity center -extent $size $dest_path/`basename $out_filename`
 }
 
 base_dir=../../photoshelf/app/src/main/res
+base_dir=../tmp
+svg_file=../svg/draft_48px.svg
 
-svg_to_png 24 300 $base_dir/drawable-mdpi draft.svg
-svg_to_png 36 300 $base_dir/drawable-hdpi draft.svg
-svg_to_png 48 300 $base_dir/drawable-xhdpi draft.svg
-svg_to_png 72 300 $base_dir/drawable-xxhdpi draft.svg
+svg_to_png 24 300 $base_dir/drawable-mdpi $svg_file
+svg_to_png 36 300 $base_dir/drawable-hdpi $svg_file
+svg_to_png 48 300 $base_dir/drawable-xhdpi $svg_file
+svg_to_png 72 300 $base_dir/drawable-xxhdpi $svg_file
 
 # convert output.png -color-matrix \
 #      " 1.5 0.0 0.0 0.0, 0.0, -0.157 \

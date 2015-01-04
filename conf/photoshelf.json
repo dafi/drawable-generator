@@ -1,0 +1,18 @@
+{
+  "resources": {
+    "ic_select_all_white_24dp.png": "ic_action_select_all.png",
+    "==>DISABLE_THIS_ic_file_upload_white_24dp.png": "ic_action_file_upload.png",
+    "ic_delete_white_24dp.png": "ic_action_delete.png",
+    "==>DISABLE_THIS_ic_cloud_download_white_24dp.png": "ic_action_download.png",
+    "ic_mode_edit_white_24dp.png": "ic_action_edit.png",
+    "ic_cloud_upload_white_24dp.png": "ic_action_cloud_upload.png",
+    "ic_remove_red_eye_white_24dp.png": "ic_action_show_image.png",
+    "ic_publish_white_24dp.png": "ic_action_publish.png",
+    "ic_refresh_white_24dp.png": "ic_action_refresh.png",
+    "ic_schedule_white_24dp.png": "ic_action_schedule.png",
+    "==>DISABLE_THIS_ic_now_wallpaper_white_24dp.png": "ic_action_set_wallpaper.png",
+    "ic_search_white_24dp.png": "ic_action_search.png",
+    "==>DISABLE_THIS_ic_share_white_24dp.png": "ic_action_share",
+    "ic_people_outline_white_24dp.png": "ic_action_mark_ignored"
+  }
+}

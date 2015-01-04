@@ -1,7 +1,11 @@
 #!/usr/local/opt/ruby/bin/ruby
 # Copy resources from material-design-icons-master to specified project res directory
 # All drawable-XXXX directories present on projects are filled
+require 'open-uri'
 require 'fileutils'
+require "json"
+require 'optparse'
+require 'ostruct'
 
 # copy the specified resource file to all drawable directories
 # Params:
@@ -20,7 +24,7 @@ def copy_res(res_from_path, drawable_root_dest_dir, basename = nil)
         if File.exist?(full_path)
             src_path = res_from_path.gsub('$path$', v);
             full_path = File.join(full_path, filename)
-            puts "cp #{src_path} #{full_path}"
+            # puts "cp #{src_path} #{full_path}"
             # FileUtils.cp(src_path, full_path)
         end
     end
@@ -53,35 +57,50 @@ def find_first_path(start, filename)
     return nil
 end
 
-dest_res_dir = '../../photoshelf/app/src/main/res'
-src_res_dir = '../material-design-icons'
+def parse_command_line()
+    cmd_opts = OpenStruct.new
+    cmd_opts.base_dest_dir = '../../photoshelf/app/src/main/res'
+    cmd_opts.src_res_dir = '../material-design-icons'
 
-# map containing the src filename and the destination filename
-# full src res path is search so it isn't necessary to determine it manually
-files_to_copy = {
-'ic_select_all_white_24dp.png'      => 'ic_action_select_all.png',
-# 'ic_file_upload_white_24dp.png'     => 'ic_action_file_upload.png',
-'ic_delete_white_24dp.png'          => 'ic_action_delete.png',
-'ic_cloud_download_white_24dp.png'  => 'ic_action_download.png',
-'ic_mode_edit_white_24dp.png'       => 'ic_action_edit.png',
-'ic_cloud_upload_white_24dp.png'    => 'ic_action_cloud_upload.png',
-'ic_remove_red_eye_white_24dp.png'  => 'ic_action_show_image.png',
-'ic_publish_white_24dp.png'         => 'ic_action_publish.png',
-'ic_refresh_white_24dp.png'         => 'ic_action_refresh.png',
-'ic_schedule_white_24dp.png'        => 'ic_action_schedule.png',
-'ic_now_wallpaper_white_24dp.png'   => 'ic_action_set_wallpaper.png',
-'ic_search_white_24dp.png'          => 'ic_action_search.png',
-'ic_share_white_24dp.png'           => 'ic_action_share',
-'ic_people_outline_white_24dp.png'  => 'ic_action_mark_ignored'
-}
+    optparser = OptionParser.new do |opts|
+        opts.banner = "Usage: #{File.basename($0)} [options] config-file"
+        opts.separator ''
+        opts.on('-b', '--base base dir', 'The drawable-XXXX base destination directory') do |value|
+            cmd_opts.src_res_dir = value
+        end
+        opts.on('-s', '--src dir', 'The source directory containing the resources to copy') do |value|
+            cmd_opts.base_dest_dir = value
+        end
+        opts.on_tail('-h', '--help', 'This help text') do
+            puts opts
+            exit
+        end
+    end
 
-files_to_copy.each do |k, v|
-    res_pattern = find_first_path(src_res_dir, k)
+    optparser.parse!
+
+    if ARGV.empty?
+        puts "config-file is mandatory"
+        puts optparser
+        exit
+    end
+    json_map = JSON.parse(open(ARGV[0]).read)
+    options = OpenStruct.new(json_map)
+    options.base_dest_dir = cmd_opts.base_dest_dir
+    options.src_res_dir = cmd_opts.src_res_dir
+
+    return options
+end
+
+options = parse_command_line()
+
+options.resources.each do |k, v|
+    next if k.start_with?('==>DISABLE_THIS')
+    res_pattern = find_first_path(options.src_res_dir, k)
     if res_pattern.nil?
-        puts 'Unable to find #{k}'
+        puts "Unable to find #{k}"
         next
     end
     res_pattern.gsub!(/drawable-.*[\/\\]/, '$path$/')
-    copy_res(res_pattern, dest_res_dir, v)
+    copy_res(res_pattern, options.base_dest_dir, v)
 end
-
