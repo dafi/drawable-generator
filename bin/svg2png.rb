@@ -2,9 +2,6 @@ require 'nokogiri'
 require 'RMagick'
 include Magick
 
-# home brew
-# gem install rmagick
-
 def create_all(base_folder, filename, svg_data)
     folders = {
        'drawable-mdpi' => [18, 24, 36, 48],
@@ -18,9 +15,9 @@ def create_all(base_folder, filename, svg_data)
     folders.each do |folder, sizes|
         sizes.each_with_index do |size, i|
             dp = dps[i]
-            icon_png_blob("#{base_folder}/#{folder}/ic_#{filename}_black_#{dp}.png", create_svg(svg_data, size, '000000'))
-            icon_png_blob("#{base_folder}/#{folder}/ic_#{filename}_grey600_#{dp}.png", create_svg(svg_data, size, '757575'))
-            icon_png_blob("#{base_folder}/#{folder}/ic_#{filename}_white_#{dp}.png", create_svg(svg_data, size, 'FFFFFF'))
+            save_png("#{base_folder}/#{folder}/ic_#{filename}_black_#{dp}.png", create_svg(svg_data, size, '000000'))
+            save_png("#{base_folder}/#{folder}/ic_#{filename}_grey600_#{dp}.png", create_svg(svg_data, size, '757575'))
+            save_png("#{base_folder}/#{folder}/ic_#{filename}_white_#{dp}.png", create_svg(svg_data, size, 'FFFFFF'))
         end
     end
 end
@@ -28,49 +25,39 @@ end
 def create_svg(data, size = 24, color = '000000', opacity = 1)
     foreground_hex = color == "000000" ? '' : "fill=\"##{color}\""
     foreground_opacity = opacity == 1 ? '' : "fill-opacity=\"#{opacity}\""
-    svg = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" <<
-     "<svg" <<
-   # " xmlns:dc=\"http://purl.org/dc/elements/1.1/\" " <<
-   # " xmlns:cc=\"http://creativecommons.org/ns#\"" <<
-   # " xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"" <<
-   # " xmlns:svg=\"http://www.w3.org/2000/svg\"" <<
-   # " xmlns=\"http://www.w3.org/2000/svg\"" <<
-   # " version=\"1.1\"" <<
-   # " id=\"svg2\"" <<
-   " width=\"#{size}\" height=\"#{size}\" viewBox=\"0 0 24 24\">" <<
-    "<path #{foreground_hex}#{foreground_opacity} d=\"#{data}\" />" <<
-    "</svg>"
-    return svg
+    return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" <<
+      "<svg width=\"#{size}\" height=\"#{size}\" viewBox=\"0 0 24 24\">" <<
+      "<path #{foreground_hex}#{foreground_opacity} d=\"#{data}\" />" <<
+      "</svg>"
 end
 
-def icon_png_blob(path, data)
-    temp_path = path + "temp.svg"
-    File.open(temp_path, 'w') {|f| f.write(data) }
-    `convert -background transparent #{temp_path} #{path}`
-    File.delete(temp_path)
+def save_png(path, data)
+    img = Image.from_blob(data) {
+      self.background_color = 'transparent'
+      self.format = 'png32'
+    }
+    img.first.write(path)
 end
 
+# def save_png(path, data)
+#     temp_path = path + "temp.svg"
+#     File.open(temp_path, 'w') {|f| f.write(data) }
+#     `convert -background transparent #{temp_path} #{path}`
+#     File.delete(temp_path)
+# end
 
-url = '../svg/draft_24px.svg'
-url = '../svg/rename_24px.svg'
-# url = "/opt/devel/0dafiprj/git.github/android/drawable-generator/material-design-icons/action/svg/design/ic_3d_rotation_24px.svg"
+if ARGV.empty?
+    puts "specify svg"
+    exit
+end
+svg_input_path = ARGV[0]
 
 # ignore namespace using local-name
-if Nokogiri::XML(open(url)).xpath("//*[local-name() = 'path']").count > 1
+if Nokogiri::XML(open(svg_input_path)).xpath("//*[local-name() = 'path']").count > 1
   puts "Only one path is allowed, please combine all"
   exit
 end
-svg_data = Nokogiri::XML(open(url)).xpath("//*[local-name() = 'path']/@d").text
-# svg_xml = create_svg(svg_data, size, color)
+svg_data = Nokogiri::XML(open(svg_input_path)).xpath("//*[local-name() = 'path']/@d").text
 
 Dir.glob("../tmp/**/drawable*/*").each do |f| File.delete(f) end
-create_all('../tmp', File.basename(url, File.extname(url)).gsub(/_[0-9]*px/, ''), svg_data)
-# img = ImageList.new(url)
-# img.write("../tmp/mio_ruby.svg")
-#  {
-#  self.background_color = 'Transparent'
-# }
-# img.write("../tmp/mio_ruby.svg")
-
-# File.open("../tmp/mio-ruby-cmd.svg", 'w') {|f| f.write(svg_xml) }
-# `convert -background transparent ../tmp/mio-ruby-cmd.svg ../tmp/mio-ruby-cmd.png`
+create_all('../tmp', File.basename(svg_input_path, File.extname(svg_input_path)).gsub(/_[0-9]*px/, ''), svg_data)
