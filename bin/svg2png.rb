@@ -5,7 +5,7 @@ include Magick
 # home brew
 # gem install rmagick
 
-def create_all(base_folder, svg_data)
+def create_all(base_folder, filename, svg_data)
     folders = {
        'drawable-mdpi' => [18, 24, 36, 48],
        'drawable-hdpi' => [27, 36, 54, 72],
@@ -15,13 +15,12 @@ def create_all(base_folder, svg_data)
     }
     dps = ['18dp', '24dp', '36dp', '48dp']
 
-    name = 'draft'
     folders.each do |folder, sizes|
         sizes.each_with_index do |size, i|
             dp = dps[i]
-            icon_png_blob("#{base_folder}/#{folder}/ic_#{name}_black_#{dp}.png", create_svg(svg_data, size, '000000'))
-            icon_png_blob("#{base_folder}/#{folder}/ic_#{name}_grey600_#{dp}.png", create_svg(svg_data, size, '757575'))
-            icon_png_blob("#{base_folder}/#{folder}/ic_#{name}_white_#{dp}.png", create_svg(svg_data, size, 'FFFFFF'))
+            icon_png_blob("#{base_folder}/#{folder}/ic_#{filename}_black_#{dp}.png", create_svg(svg_data, size, '000000'))
+            icon_png_blob("#{base_folder}/#{folder}/ic_#{filename}_grey600_#{dp}.png", create_svg(svg_data, size, '757575'))
+            icon_png_blob("#{base_folder}/#{folder}/ic_#{filename}_white_#{dp}.png", create_svg(svg_data, size, 'FFFFFF'))
         end
     end
 end
@@ -53,14 +52,19 @@ end
 
 
 url = '../svg/draft_24px.svg'
-size = 192
-color = 'FFFFFF' #757575';
+url = '../svg/rename_24px.svg'
+# url = "/opt/devel/0dafiprj/git.github/android/drawable-generator/material-design-icons/action/svg/design/ic_3d_rotation_24px.svg"
 
 # ignore namespace using local-name
+if Nokogiri::XML(open(url)).xpath("//*[local-name() = 'path']").count > 1
+  puts "Only one path is allowed, please combine all"
+  exit
+end
 svg_data = Nokogiri::XML(open(url)).xpath("//*[local-name() = 'path']/@d").text
 # svg_xml = create_svg(svg_data, size, color)
 
-create_all('../tmp', svg_data)
+Dir.glob("../tmp/**/drawable*/*").each do |f| File.delete(f) end
+create_all('../tmp', File.basename(url, File.extname(url)).gsub(/_[0-9]*px/, ''), svg_data)
 # img = ImageList.new(url)
 # img.write("../tmp/mio_ruby.svg")
 #  {
