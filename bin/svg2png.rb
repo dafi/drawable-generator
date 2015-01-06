@@ -144,4 +144,13 @@ $folders.each do |folder, sizes|
 end
 
 Dir.glob(File.join(options.dest_dir, "**", "drawable*", "*")).each do |f| File.delete(f) end if options.clean
-Dir.glob(File.join(options.svg_path, "**", "*.svg")).each do |f| convert_svg_to_pngs(f, options.dest_dir) end if options.recursive
+if options.recursive
+  Dir.glob(File.join(options.svg_path, "**", "*.svg")).each do |f| convert_svg_to_pngs(f, options.dest_dir) end
+else
+  if File.directory?(options.svg_path)
+      Dir.glob(File.join(options.svg_path, "*.svg")).each do |f| convert_svg_to_pngs(f, options.dest_dir) end
+  else
+    convert_svg_to_pngs(options.svg_path, options.dest_dir)
+  end
+end
+
