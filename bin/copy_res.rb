@@ -64,13 +64,13 @@ def parse_command_line()
 
     optparser = OptionParser.new do |opts|
         opts.banner = "Usage: #{File.basename($0)} [options] config-file"
-        opts.separator ''
         opts.on('-d', '--dest root_dir', 'The root drawable-XXXX destination directory') do |value|
             cmd_opts.dest_dir = value
         end
         opts.on('-s', '--src root_dir', 'The source directory containing the resources to copy') do |value|
             cmd_opts.src_dir = value
         end
+        opts.separator ''
         opts.on_tail('-h', '--help', 'This help text') do
             puts opts
             exit
