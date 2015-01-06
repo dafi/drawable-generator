@@ -126,7 +126,7 @@ end
 def convert_svg_to_pngs(svg_file, dest_dir)
   paths = Nokogiri::XML(open(svg_file)).xpath("//*[local-name() = 'path']")
   if paths.count > 1
-    puts "#{svg_file} can be converted because contains more than on path, please combine all"
+    puts "#{svg_file} can't be converted because contains more than on path, please combine all"
     return
   end
 
