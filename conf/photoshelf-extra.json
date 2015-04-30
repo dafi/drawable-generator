@@ -1,0 +1,7 @@
+{
+  "resources": {
+    "==>DISABLE_THIS This file contains resources not contained into the meterial design. These files are got from different sources": "",
+    "ic_draft_white_24dp.png": "ic_action_draft.png",
+    "ic_search_grey600_48dp.png": "ic_empty_state_search.png"
+  }
+}
