@@ -19,13 +19,13 @@ require 'ostruct'
 include Magick
 
 $folders = {
-   'drawable-mdpi' => [18, 24, 36, 48],
-   'drawable-hdpi' => [27, 36, 54, 72],
-   'drawable-xhdpi' => [36, 48, 72, 96],
-   'drawable-xxhdpi' => [54, 72, 108, 144],
-   'drawable-xxxhdpi' => [72, 96, 144, 192]
+   'drawable-mdpi' => [18, 24, 36, 48, 128],
+   'drawable-hdpi' => [27, 36, 54, 72, 192],
+   'drawable-xhdpi' => [36, 48, 72, 96, 256],
+   'drawable-xxhdpi' => [54, 72, 108, 144, 384],
+   'drawable-xxxhdpi' => [72, 96, 144, 192, 512]
 }
-$dps = ['18dp', '24dp', '36dp', '48dp']
+$dps = ['18dp', '24dp', '36dp', '48dp', '128dp']
 
 def create_all_drawables(base_folder, filename, svg_data)
     $folders.each do |folder, sizes|
