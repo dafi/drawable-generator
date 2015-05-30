@@ -1,5 +1,6 @@
 {
   "resources": {
+    "ic_swap_vert_white_24dp.png": "ic_action_tags_navigator.png",
     "ic_now_wallpaper_black_48dp.png": "stub.png",
     "ic_sync_black_24dp.png": "navigation_refresh.png",
     "ic_remove_circle_outline_white_24dp.png": "stat_notify_error.png",
