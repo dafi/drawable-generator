@@ -1,5 +1,6 @@
 {
   "resources": {
+    "ic_card_giftcard_black_24dp": "stat_notify_bday",
     "ic_swap_vert_white_24dp.png": "ic_action_tags_navigator.png",
     "ic_now_wallpaper_black_48dp.png": "stub.png",
     "ic_sync_black_24dp.png": "navigation_refresh.png",
